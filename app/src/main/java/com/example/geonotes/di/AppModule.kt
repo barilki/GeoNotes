@@ -48,7 +48,7 @@ object AppModule {
         noteDb: NotesDatabase,
         authRepository: AuthRepository,
     ): NotesRepository {
-        return NotesRepositoryImpl(noteDb, authRepository)
+        return NotesRepositoryImpl(noteDb)
     }
 
     @Provides
