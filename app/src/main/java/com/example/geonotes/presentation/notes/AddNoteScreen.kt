@@ -67,7 +67,7 @@ fun AddNoteScreen(
                             if (note == null) {
                                 viewModel.handleIntent(NoteIntent.CreateNote(title, content))
                             } else {
-//                                viewModel.handleIntent(CreateNoteIntent.UpdateNote(note, title, content))
+                                viewModel.handleIntent(NoteIntent.UpdateNote(note, title, content))
                             }
                         },
                         enabled = enabled

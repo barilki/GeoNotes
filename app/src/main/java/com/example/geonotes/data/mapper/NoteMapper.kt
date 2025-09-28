@@ -12,7 +12,7 @@ fun Note.toNoteEntity(
         longitude = longitude,
         createdAt = createdAt,
         updatedAt = updatedAt,
-        userId = id
+        id = id
     )
 }
 
@@ -25,6 +25,6 @@ fun NoteEntity.toNote(): Note {
         longitude = longitude,
         createdAt = createdAt,
         updatedAt = updatedAt,
-        id = userId ?: ""
+        id = id
     )
 }

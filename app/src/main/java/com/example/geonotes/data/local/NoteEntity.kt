@@ -8,12 +8,11 @@ import java.time.LocalDateTime
 @Entity(tableName = "notes")
 data class NoteEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    val id: Long = 0,
     val title: String,
     val content: String,
     val latitude: Double,
     val longitude: Double,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
-    val userId: String? = null
 )

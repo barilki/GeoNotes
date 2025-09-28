@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android) version "2.2.10" // Update this
     alias(libs.plugins.kotlin.compose)
+    id("kotlin-parcelize")
     id("com.google.devtools.ksp") version "2.2.10-2.0.2"
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")

@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 
@@ -29,7 +30,7 @@ class AddNoteViewModel @Inject constructor(
             is NoteIntent.ClearError -> clearError()
             is NoteIntent.ResetState -> resetState()
             is NoteIntent.DeleteNote -> TODO()
-            is NoteIntent.UpdateNote -> TODO()
+            is NoteIntent.UpdateNote -> updateNote(intent.note, intent.title, intent.content)
         }
     }
 
@@ -78,6 +79,7 @@ class AddNoteViewModel @Inject constructor(
                 val updated = original.copy(
                     title = title.trim(),
                     content = content.trim(),
+                    updatedAt = LocalDateTime.now()
                 )
                 when (val res = notesRepository.updateNote(updated)) {
                     is Resource.Success -> _uiState.value = _uiState.value.copy(isLoading = false, isNoteSaved = true)

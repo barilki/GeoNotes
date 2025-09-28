@@ -15,7 +15,6 @@ import javax.inject.Singleton
 @Singleton
 class NotesRepositoryImpl @Inject constructor(
     noteDb: NotesDatabase,
-    private val authRepository: AuthRepository
 ) : NotesRepository {
 
     private val noteDao = noteDb.noteDao()
@@ -26,7 +25,7 @@ class NotesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getNoteById(id: String): Note? {
+    override suspend fun getNoteById(id: Long): Note? {
         return try {
             return noteDao.getNoteById(id)?.toNote()
         } catch (e: Exception) {
@@ -36,13 +35,7 @@ class NotesRepositoryImpl @Inject constructor(
 
     override suspend fun createNote(note: Note): Resource<Unit> {
         return try {
-            val currentUserId = authRepository.getCurrentUserId()
-//            val noteWithUser = note.copy(
-//                createdAt = Date().time,
-//                updatedAt = Date().time
-//            )
-
-            val entity = note.toNoteEntity().copy(userId = currentUserId)
+            val entity = note.toNoteEntity()
             noteDao.upsertNoteEntity(entity)
             Resource.Success(Unit)
         } catch (e: Exception) {
@@ -52,7 +45,6 @@ class NotesRepositoryImpl @Inject constructor(
 
     override suspend fun updateNote(note: Note): Resource<Unit> {
         return try {
-//            val updatedNote = note.copy(updatedAt = it)
             val entity = note.toNoteEntity()
             noteDao.upsertNoteEntity(entity)
             Resource.Success(Unit)

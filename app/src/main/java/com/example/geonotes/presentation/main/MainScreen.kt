@@ -15,6 +15,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.geonotes.domain.model.Note
 import com.example.geonotes.presentation.main.components.EmptyNotes
 import com.example.geonotes.presentation.main.components.NoteCard
 import com.example.geonotes.presentation.main.components.NotesMap
@@ -24,7 +25,8 @@ import com.example.geonotes.presentation.main.components.NotesMap
 @Composable
 fun MainScreen(
     onNavigateToCreateNote: () -> Unit = {},
-    onNavigateToNoteDetail: (String) -> Unit = {},
+    onNavigateToEditNote: (Note) -> Unit = {},
+    onNavigateToNoteDetail: (Note) -> Unit = {},
     onSignOut: () -> Unit = {},
     viewModel: MainViewModel = hiltViewModel()
 ) {
@@ -93,17 +95,11 @@ fun MainScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = uiState.error!!,
+                            text = uiState.error ?: "Unknown error",
                             style = MaterialTheme.typography.bodyLarge,
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.error
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Button(
-                            onClick = { viewModel.handleIntent(MainIntent.RefreshNotes) }
-                        ) {
-                            Text("Retry")
-                        }
                     }
                 }
 
@@ -128,7 +124,13 @@ fun MainScreen(
                                     NoteCard(
                                         note = note,
                                         onClick = {
-                                            viewModel.handleIntent(MainIntent.NavigateToNoteDetail(note.id))
+                                            onNavigateToNoteDetail(note)
+                                        },
+                                        onDelete = {
+                                            viewModel.handleIntent(MainIntent.DeleteNote(note))
+                                        },
+                                        onUpdate = {
+                                            onNavigateToEditNote(note)
                                         }
                                     )
                                 }
@@ -138,8 +140,8 @@ fun MainScreen(
                         DisplayMode.MAP -> {
                             NotesMap(
                                 notes = uiState.notes,
-                                onNoteClick = { noteId ->
-                                    viewModel.handleIntent(MainIntent.NavigateToNoteDetail(noteId))
+                                onNoteClick = { note ->
+                                    onNavigateToNoteDetail(note)
                                 }
                             )
                         }

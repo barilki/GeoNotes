@@ -2,13 +2,9 @@ package com.example.geonotes.presentation.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.geonotes.domain.model.Note
 import com.example.geonotes.domain.repository.AuthRepository
 import com.example.geonotes.domain.repository.NotesRepository
-//import com.example.geonotes.presentation.main.intent.MainIntent
-//import com.example.geonotes.presentation.main.state.DisplayMode
-//import com.example.geonotes.presentation.main.state.MainState
-//import com.example.geonotes.presentation.navigation.NavigationEvent
-//import com.example.geonotes.presentation.navigation.NavigationManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +16,6 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val notesRepository: NotesRepository,
     private val authRepository: AuthRepository,
-//    private val navigationManager: NavigationManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainState())
@@ -34,17 +29,11 @@ class MainViewModel @Inject constructor(
     fun handleIntent(intent: MainIntent) {
         when (intent) {
             is MainIntent.ToggleDisplayMode -> toggleDisplayMode()
-            is MainIntent.NavigateToNoteDetail -> navigateToNoteDetail(intent.noteId)
-            is MainIntent.NavigateToCreateNote -> navigateToCreateNote()
             is MainIntent.SignOut -> signOut()
             is MainIntent.LoadNotes -> loadNotes()
-            MainIntent.RefreshNotes -> TODO()
+            is MainIntent.DeleteNote -> deleteNote(intent.note)
         }
     }
-
-//    // Convenience methods for UI
-//    fun refreshNotes() = handleIntent(MainIntent.RefreshNotes)
-//    fun toggleDisplayMode() = handleIntent(MainIntent.ToggleDisplayMode)
 
     private fun loadNotes() {
         viewModelScope.launch {
@@ -67,14 +56,23 @@ class MainViewModel @Inject constructor(
         }
     }
 
-//    private fun refreshNotes() {
-//        loadNotes()
-//    }
-
     private fun toggleDisplayMode() {
         val currentMode = _uiState.value.displayMode
         val newMode = if (currentMode == DisplayMode.LIST) DisplayMode.MAP else DisplayMode.LIST
         _uiState.value = _uiState.value.copy(displayMode = newMode)
+    }
+
+
+    private fun deleteNote(note: Note) {
+        viewModelScope.launch {
+            try {
+                notesRepository.deleteNote(note)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    error = e.message ?: "Failed to delete note"
+                )
+            }
+        }
     }
 
     private fun loadUserName() {
@@ -86,18 +84,6 @@ class MainViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(userName = "User")
             }
         }
-    }
-
-    private fun navigateToNoteDetail(noteId: String) {
-//        viewModelScope.launch {
-//            navigationManager.navigate(NavigationEvent.NavigateToNoteDetail(noteId))
-//        }
-    }
-
-    private fun navigateToCreateNote() {
-//        viewModelScope.launch {
-//            navigationManager.navigate(NavigationEvent.NavigateToCreateNote)
-//        }
     }
 
     private fun signOut() {

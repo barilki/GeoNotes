@@ -16,7 +16,7 @@ import org.osmdroid.views.overlay.Marker
 @Composable
 fun NotesMap(
     notes: List<Note>,
-    onNoteClick: (String) -> Unit,
+    onNoteClick: (Note) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -54,7 +54,7 @@ fun NotesMap(
                     setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
 
                     setOnMarkerClickListener { _, _ ->
-                        onNoteClick(note.id)
+                        onNoteClick(note)
                         true
                     }
                 }

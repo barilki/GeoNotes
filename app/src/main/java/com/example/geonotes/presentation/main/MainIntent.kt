@@ -1,10 +1,10 @@
 package com.example.geonotes.presentation.main
 
+import com.example.geonotes.domain.model.Note
+
 sealed class MainIntent {
-    object LoadNotes : MainIntent()
-    object RefreshNotes : MainIntent()
-    object ToggleDisplayMode : MainIntent()
-    data class NavigateToNoteDetail(val noteId: String) : MainIntent()
-    object NavigateToCreateNote : MainIntent()
-    object SignOut : MainIntent()
+    data object LoadNotes : MainIntent()
+    data object ToggleDisplayMode : MainIntent()
+    data object SignOut : MainIntent()
+    data class DeleteNote(val note: Note) : MainIntent()
 }
