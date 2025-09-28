@@ -37,7 +37,7 @@ class AuthRepositoryImpl @Inject constructor(
             val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
             val user = result.user
             if (user != null) {
-                user.updateProfile(userProfileChangeRequest { displayName = name })
+                user.updateProfile(userProfileChangeRequest { displayName = name }).await()
                 emit(Resource.Success(true))
             } else {
                 emit(Resource.Error("Authentication failed"))
@@ -51,11 +51,19 @@ class AuthRepositoryImpl @Inject constructor(
         firebaseAuth.signOut()
     }
 
+    override fun getCurrentUserName(): String? {
+        return firebaseAuth.currentUser?.displayName;
+    }
+
     override fun getCurrentUser(): Flow<Boolean> = callbackFlow {
         val authStateListener = FirebaseAuth.AuthStateListener { auth ->
             trySend(auth.currentUser != null)
         }
         firebaseAuth.addAuthStateListener(authStateListener)
         awaitClose { firebaseAuth.removeAuthStateListener(authStateListener) }
+    }
+
+    override fun getCurrentUserId(): String {
+        return firebaseAuth.currentUser?.uid ?: ""
     }
 }

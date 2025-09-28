@@ -1,8 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.android) version "2.2.10" // Update this
     alias(libs.plugins.kotlin.compose)
-    id("com.google.devtools.ksp")
+    id("com.google.devtools.ksp") version "2.2.10-2.0.2"
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
 }
@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.geonotes"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -58,14 +58,31 @@ dependencies {
     implementation ("androidx.compose.material:material-icons-extended")
 
     // Add Hilt dependencies
-    implementation("com.google.dagger:hilt-android:2.57.1")
-    implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
-    ksp("com.google.dagger:hilt-android-compiler:2.57.1")
+    implementation(libs.hilt.android.v2571)
+    implementation(libs.androidx.hilt.navigation.compose)
+    ksp(libs.hilt.android.compiler)
 
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.kotlinx.coroutines.play.services)
+
+    // Maps
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps)
+    // Add OSMDroid dependencies
+    implementation(libs.osmdroid.android)
+    implementation(libs.osmdroid.wms)
+    implementation(libs.osmdroid.mapsforge)
+
+    // Location
+    implementation(libs.play.services.location)
+
+    // Room DB
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp("androidx.room:room-compiler:2.8.1")
+    ksp("com.google.dagger:dagger-compiler:2.51.1")
 
     implementation(libs.androidx.animation.core.lint)
 
